@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>New Campground</title>
+</head>
+<body>
+  <form action="/campgrounds" method="POST">
+    <div>
+      <label for="title">Title</label>
+      <input placeholder="Sea Hunting Camp" type="text" id="title" name="campground[title]">
+    </div>
+    <div>
+      <label for="location">Location</label>
+      <input placeholder="Elk Grove, California" type="text" id="location" name="campground[location]">
+    </div>
+    <div>
+      <label for="price">price</label>
+      <input placeholder="499" type="number" id="price" name="campground[price]">
+    </div>
+    <button>Add Campground</button>
+    <a href="/campgrounds">Back</a>
+  </form>
+</body>
+</html>
