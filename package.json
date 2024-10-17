@@ -2,7 +2,7 @@
   "name": "yelpcamp",
   "version": "1.0.0",
   "description": "My version of YelpCamp project",
-  "main": "index.js",
+  "main": "app.js",
   "type": "module",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -19,8 +19,12 @@
   "homepage": "https://github.com/h0dy/YelpCamp#readme",
   "dependencies": {
     "ejs": "^3.1.10",
+    "ejs-mate": "^4.0.0",
     "express": "^4.21.1",
     "method-override": "^3.0.0",
     "mongoose": "^8.7.1"
+  },
+  "devDependencies": {
+    "morgan": "^1.10.0"
   }
 }

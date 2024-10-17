@@ -2,6 +2,8 @@ import express from "express";
 import mongoose from "mongoose";
 import Campground from "./models/campground.js";
 import methodOverride from "method-override";
+import morgan from "morgan";
+import ejsMate from "ejs-mate";
 const app = express();
 
 const connectDB = async () => {
@@ -13,10 +15,13 @@ const connectDB = async () => {
   }
 };
 
+// middlewares
+app.use(morgan("dev"));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(methodOverride("_method"));
 
+app.engine("ejs", ejsMate);
 app.set("view engine", "ejs");
 app.set("views");
 

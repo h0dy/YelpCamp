@@ -18,8 +18,13 @@ const seedDB = async () => {
     const random999 = Math.floor(Math.random() * 999);
     await Campground.create({
       title: `${sample(descriptors)} ${sample(places)}`,
+      price: Math.floor(Math.random() * 199) + 38,
+      description:
+        "nima animi quidem! Impedit, amet! Iure, ex. Dolor perspiciatis asperiores temporibus fuga facilis. Iure, quibusdam deserunt suscipit perferendis perspiciatis explicabo minus.",
       location: `${cities[random999].city}, ${cities[random999].state}`,
-      price: Math.floor(Math.random() * 1099) + 300,
+      image: `https://picsum.photos/1240?random=${Math.floor(
+        Math.random() * 100
+      )}`,
     });
   }
 };
