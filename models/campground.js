@@ -17,10 +17,11 @@ const CampgroundSchema = new mongoose.Schema({
   location: {
     type: String,
     trim: true,
-    required: [true, "A campground must have a price"],
+    required: [true, "A campground must have a location"],
   },
   image: {
     type: String,
+    required: [true, "A campground must have an image"],
   },
 });
 

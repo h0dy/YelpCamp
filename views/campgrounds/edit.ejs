@@ -2,37 +2,48 @@
   <div class="row">
     <h1 class="text-center">Edit Campground</h1>
     <div class="col-6 offset-3">
-      <form action="/campgrounds/<%= camp._id %>?_method=PATCH" method="POST">
+      <form action="/campgrounds/<%= camp._id %>?_method=PATCH" method="POST" novalidate class="validated-form">
         <div class="mb-3">
           <label class="form-label" for="title">Title</label>
-          <input class="form-control" placeholder="Sea Hunting Camp" type="text" id="title" name="campground[title]"
-            value="<%=camp.title %>">
+          <input required class="form-control" placeholder="Sea Hunting Camp" type="text" id="title"
+            name="campground[title]" value="<%=camp.title %>">
+          <div class="valid-feedback">Looks Good!</div>
+          <div class="invalid-feedback">A Campground must have a title</div>
         </div>
         <div class="mb-3">
           <label class="form-label" for="location">Location</label>
-          <input class="form-control" placeholder="Elk Grove, California" type="text" id="location"
+          <input required class="form-control" placeholder="Elk Grove, California" type="text" id="location"
             name="campground[location]" value="<%=camp.location%>">
+          <div class="valid-feedback">Looks Good!</div>
+          <div class="invalid-feedback">A campground must have a location</div>
         </div>
         <div class="mb-3">
           <label class="form-label" for="price">price</label>
           <div class="input-group mb-3">
             <span class="input-group-text">$</span>
-            <input value="<%= camp.price %>" name="campground[price]" id="price" placeholder="499" type="text"
-              class="form-control" aria-label="Amount (to the nearest dollar)">
+            <input required value="<%= camp.price %>" name="campground[price]" id="price" placeholder="499"
+              type="number" class="form-control" aria-label="Amount (to the nearest dollar)">
             <span class="input-group-text">.00</span>
+            <div class="valid-feedback">Looks Good!</div>
+            <div class="invalid-feedback">A campground must have a price</div>
           </div>
         </div>
         <div class="mb-3">
           <label class="form-label" for="Image">Image Url</label>
-          <input class="form-control" type="text" id="Image" value="<%= camp.image %>" name="campground[image]">
+          <input required class="form-control" type="text" id="Image" value="<%= camp.image %>"
+            name="campground[image]">
+          <div class="valid-feedback">Looks Good!</div>
+          <div class="invalid-feedback">A campground must have an image</div>
         </div>
         <div class="mb-3">
           <label for="description" class="form-label">Description</label>
-          <textarea class="form-control" id="description" rows="3"
+          <textarea required class="form-control" id="description" rows="3"
             name="campground[description]"><%= camp.description %></textarea>
+          <div class="valid-feedback">Looks Good!</div>
+          <div class="invalid-feedback">A campground must have a description</div>
         </div>
         <div class=" mb-3">
-          <button class="btn btn-success">Update Campground</button>
+          <button class="btn btn-info">Update Campground</button>
         </div>
       </form>
       <a href="/campgrounds/<%= camp._id %>">Back To Campground</a>
