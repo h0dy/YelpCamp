@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import Review from "./review.js";
 
 const CampgroundSchema = new mongoose.Schema({
   title: {
@@ -23,6 +24,22 @@ const CampgroundSchema = new mongoose.Schema({
     type: String,
     required: [true, "A campground must have an image"],
   },
+  reviews: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Review",
+    },
+  ],
+});
+
+CampgroundSchema.post("findOneAndDelete", async function (doc) {
+  if (doc) {
+    await Review.deleteMany({
+      _id: {
+        $in: doc.reviews,
+      },
+    });
+  }
 });
 
 export default mongoose.model("Campground", CampgroundSchema);
