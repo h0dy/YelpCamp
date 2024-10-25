@@ -22,7 +22,7 @@ const seedDB = async () => {
       description:
         "nima animi quidem! Impedit, amet! Iure, ex. Dolor perspiciatis asperiores temporibus fuga facilis. Iure, quibusdam deserunt suscipit perferendis perspiciatis explicabo minus.",
       location: `${cities[random999].city}, ${cities[random999].state}`,
-      image: `https://picsum.photos/1240?random=${Math.floor(
+      image: `https://picsum.photos/720?random=${Math.floor(
         Math.random() * 100
       )}`,
     });
