@@ -3,6 +3,7 @@ import catchAsync from "../utils/catchAsync.js";
 import AppError from "../utils/appError.js";
 import Campground from "../models/campground.js";
 import { campgroundSchema } from "../schemas.js";
+import { isLoggedIn } from "../middleware.js";
 const router = express.Router();
 
 const validateCampground = (req, res, next) => {
@@ -25,12 +26,13 @@ router.get(
 );
 
 // create
-router.get("/new", (req, res) => {
+router.get("/new", isLoggedIn, (req, res) => {
   res.render("campgrounds/new");
 });
 
 router.post(
   "/",
+  isLoggedIn,
   validateCampground,
   catchAsync(async (req, res, next) => {
     const newCamp = await Campground.create(req.body.campground);
@@ -54,6 +56,7 @@ router.get(
 // update
 router.get(
   "/:id/edit",
+  isLoggedIn,
   catchAsync(async (req, res) => {
     const camp = await Campground.findById(req.params.id);
     if (!camp) {
@@ -65,6 +68,7 @@ router.get(
 );
 router.patch(
   "/:id",
+  isLoggedIn,
   validateCampground,
   catchAsync(async (req, res) => {
     const updateCamp = await Campground.findByIdAndUpdate(
@@ -83,6 +87,7 @@ router.patch(
 // delete
 router.delete(
   "/:id",
+  isLoggedIn,
   catchAsync(async (req, res) => {
     await Campground.findByIdAndDelete(req.params.id);
     res.redirect("/campgrounds");
