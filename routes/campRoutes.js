@@ -3,7 +3,7 @@ import catchAsync from "../utils/catchAsync.js";
 import AppError from "../utils/appError.js";
 import Campground from "../models/campground.js";
 import { campgroundSchema } from "../schemas.js";
-import { isLoggedIn } from "../middleware.js";
+import { isLoggedIn, isOwner } from "../middleware.js";
 const router = express.Router();
 
 const validateCampground = (req, res, next) => {
@@ -21,7 +21,7 @@ router.get(
   "/",
   catchAsync(async (req, res) => {
     const camps = await Campground.find();
-    res.render("campgrounds/index", { camps });
+    res.status(200).render("campgrounds/index", { camps });
   })
 );
 
@@ -35,21 +35,25 @@ router.post(
   isLoggedIn,
   validateCampground,
   catchAsync(async (req, res, next) => {
-    const newCamp = await Campground.create(req.body.campground);
+    const newCamp = new Campground(req.body.campground);
+    newCamp.owner = req.user._id;
+    await newCamp.save();
     req.flash("success", "Successfully made a new campground!");
-    res.redirect(`/campgrounds/${newCamp._id}`);
+    res.status(201).redirect(`/campgrounds/${newCamp._id}`);
   })
 );
 
 router.get(
   "/:id",
   catchAsync(async (req, res, next) => {
-    const camp = await Campground.findById(req.params.id).populate("reviews");
+    const camp = await Campground.findById(req.params.id)
+      .populate({ path: "reviews", populate: { path: "author" } })
+      .populate("owner");
     if (!camp) {
       req.flash("error", "Cannot find that campground!");
       return res.redirect("/campgrounds");
     }
-    res.render("campgrounds/show", { camp });
+    res.status(200).render("campgrounds/show", { camp });
   })
 );
 
@@ -57,6 +61,7 @@ router.get(
 router.get(
   "/:id/edit",
   isLoggedIn,
+  isOwner,
   catchAsync(async (req, res) => {
     const camp = await Campground.findById(req.params.id);
     if (!camp) {
@@ -70,6 +75,7 @@ router.patch(
   "/:id",
   isLoggedIn,
   validateCampground,
+  isOwner,
   catchAsync(async (req, res) => {
     const updateCamp = await Campground.findByIdAndUpdate(
       req.params.id,
@@ -80,7 +86,7 @@ router.patch(
       }
     );
     req.flash("update", "The campground has been updated!");
-    res.redirect(`/campgrounds/${updateCamp._id}`);
+    res.status(204).redirect(`/campgrounds/${updateCamp._id}`);
   })
 );
 
@@ -88,9 +94,11 @@ router.patch(
 router.delete(
   "/:id",
   isLoggedIn,
+  isOwner,
   catchAsync(async (req, res) => {
     await Campground.findByIdAndDelete(req.params.id);
-    res.redirect("/campgrounds");
+    req.flash("info", "Your Campground successfully has been deleted!");
+    res.status(204).redirect("/campgrounds");
   })
 );
 

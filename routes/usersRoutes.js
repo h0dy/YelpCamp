@@ -9,7 +9,7 @@ const router = express.Router();
 router.get("/register", (req, res) => {
   res.render("users/register");
 });
-router.post("/register", async (req, res) => {
+router.post("/register", async (req, res, next) => {
   try {
     const { email, username, password } = req.body;
     const user = new User({ email, username });

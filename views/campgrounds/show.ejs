@@ -16,55 +16,66 @@
           </li>
           <li class="list-group-item">$<%= camp.price %>/week
           </li>
+          <li class="list-group-item">
+            Submitted by <strong>
+              <%= camp.owner.username %>
+            </strong>
+          </li>
         </ul>
-        <div class="card-body">
-          <a href="/campgrounds/<%=camp._id%>/edit" class="card-link btn btn-info">Edit</a>
-          <form class="d-inline" action="/campgrounds/<%=camp._id%>?_method=DELETE" method="POST">
-            <button class="btn btn-danger">delete</button>
-          </form>
-        </div>
-        <div class="card-footer">
-          <small class="text-body-secondary">Last updated 2 days ago</small>
-        </div>
+        <!-- if signedInUser exist and own it -->
+        <% if( signedInUser && camp.owner.equals(signedInUser._id)) {%>
+          <div class="card-body">
+            <a href="/campgrounds/<%=camp._id%>/edit" class="card-link btn btn-info">Edit</a>
+            <form class="d-inline" action="/campgrounds/<%=camp._id%>?_method=DELETE" method="POST">
+              <button class="btn btn-danger">delete</button>
+            </form>
+          </div>
+          <%}%>
+            <div class="card-footer">
+              <small class="text-body-secondary">Last updated 2 days ago</small>
+            </div>
       </div>
     </div>
     <div class="col-6">
-      <h2>Leave a Review</h2>
-      <form action="/campgrounds/<%= camp._id %>/reviews" method="POST" class="mb-3 validated-form" novalidate>
-        <div class="mb-3">
-          <label class="from-label" for="rating">Rating</label>
-          <input class="form-range" type="range" name="review[rating]" min="1" max="5" id="rating">
-        </div>
-        <div class="mb-3">
-          <label class="form-label" for="body">Review</label>
-          <textarea class="form-control" name="review[body]" id="body" cols="70" rows="3" required></textarea>
-          <div class="valid-feedback">Looks Good!</div>
-          <div class="invalid-feedback">You can't submit an empty review</div>
-        </div>
-        <button class="btn btn-success">Submit</button>
-      </form>
-      <h2>Top reviews</h2>
-      <% for (let review of camp.reviews.sort((a, b)=> parseFloat(b.rating) - parseFloat(a.rating))) {%>
-        <div class="mb-3">
-          <div class="card">
-            <div class="card-header">
-              Username
-            </div>
-            <div class="card-body">
-              <blockquote class="blockquote mb-3">
-                <p>
-                  <%= review.rating %>/5
-                </p>
-                <footer class="blockquote-footer">
-                  <%= review.body %>
-                </footer>
-              </blockquote>
-              <form action="/campgrounds/<%= camp._id %>/reviews/<%= review._id %>?_method=DELETE" method="POST">
-                <button class="btn btn-sm btn-danger">Delete</button>
-              </form>
-            </div>
+      <% if (signedInUser){ %>
+        <h2>Leave a Review</h2>
+        <form action="/campgrounds/<%= camp._id %>/reviews" method="POST" class="mb-3 validated-form" novalidate>
+          <div class="mb-3">
+            <label class="from-label" for="rating">Rating</label>
+            <input class="form-range" type="range" name="review[rating]" min="1" max="5" id="rating">
           </div>
-        </div>
-        <% }%>
+          <div class="mb-3">
+            <label class="form-label" for="body">Review</label>
+            <textarea class="form-control" name="review[body]" id="body" cols="70" rows="3" required></textarea>
+            <div class="valid-feedback">Looks Good!</div>
+            <div class="invalid-feedback">You can't submit an empty review</div>
+          </div>
+          <button class="btn btn-success">Submit</button>
+        </form>
+        <% } %>
+          <% for (let review of camp.reviews.sort((a, b)=> parseFloat(b.rating) - parseFloat(a.rating))) {%>
+            <div class="mb-3">
+              <div class="card">
+                <div class="card-header">
+                  <%= review.author.username %>
+                </div>
+                <div class="card-body">
+                  <blockquote class="blockquote mb-3">
+                    <p>
+                      <%= review.rating %>/5
+                    </p>
+                    <footer class="blockquote-footer">
+                      <%= review.body %>
+                    </footer>
+                  </blockquote>
+                  <% if( signedInUser && review.author.equals(signedInUser._id)) {%>
+                    <form action="/campgrounds/<%= camp._id %>/reviews/<%= review._id %>?_method=DELETE" method="POST">
+                      <button class="btn btn-sm btn-danger">Delete</button>
+                    </form>
+                    <%}%>
+                </div>
+              </div>
+            </div>
+            <% }%>
     </div>
   </div>

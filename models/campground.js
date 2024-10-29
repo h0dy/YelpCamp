@@ -2,6 +2,10 @@ import mongoose from "mongoose";
 import Review from "./review.js";
 
 const CampgroundSchema = new mongoose.Schema({
+  owner: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "User",
+  },
   title: {
     type: String,
     required: [true, "A Campground must have a title"],

@@ -13,22 +13,22 @@ import { places, descriptors } from "./seedHelpers.js";
 })();
 const sample = (arr) => arr[Math.floor(Math.random() * arr.length)];
 const seedDB = async () => {
-  await Campground.deleteMany({});
-  for (let i = 0; i < 50; i++) {
+  // await Campground.deleteMany({});
+  for (let i = 0; i < 20; i++) {
     const random999 = Math.floor(Math.random() * 999);
     await Campground.create({
+      owner: "6720b2b6dba61b45b4a07608",
       title: `${sample(descriptors)} ${sample(places)}`,
       price: Math.floor(Math.random() * 199) + 38,
       description:
         "nima animi quidem! Impedit, amet! Iure, ex. Dolor perspiciatis asperiores temporibus fuga facilis. Iure, quibusdam deserunt suscipit perferendis perspiciatis explicabo minus.",
       location: `${cities[random999].city}, ${cities[random999].state}`,
       image: `https://picsum.photos/720?random=${Math.floor(
-        Math.random() * 100
+        Math.random() * 100 
       )}`,
     });
   }
 };
-seedDB();
 seedDB().then(() => {
   mongoose.connection.close();
 });
