@@ -1,5 +1,7 @@
 import Campground from "./models/campground.js";
 import Review from "./models/review.js";
+import { reviewSchema, campgroundSchema } from "./schemas.js";
+import AppError from "./utils/appError.js";
 
 export const isLoggedIn = (req, res, next) => {
   if (!req.isAuthenticated()) {
@@ -39,3 +41,23 @@ We store req.originalUrl in req.session.returnTo instead of directly in res.loca
 
 By transferring req.session.returnTo to res.locals just before passport.authenticate() is executed, we ensure that the URL is preserved even though the session is cleared after authentication by the passport.authenticate() method (in that final single login request-response cycle when the actual authentication happens).
  */
+
+export const validateCampground = (req, res, next) => {
+  const { error } = campgroundSchema.validate(req.body);
+  if (error) {
+    const messageError = error.details.map((el) => el.message).join(",");
+    throw new AppError(messageError, 400);
+  } else {
+    next();
+  }
+};
+
+export const validateReview = (req, res, next) => {
+  const { error } = reviewSchema.validate(req.body);
+  if (error) {
+    const messageError = error.details.map((el) => el.message).join(",");
+    throw new AppError(messageError, 400);
+  } else {
+    next();
+  }
+};
