@@ -1,6 +1,13 @@
 import mongoose from "mongoose";
 import Review from "./review.js";
 
+const imageSchema = new mongoose.Schema({
+  url: String,
+  filename: String,
+});
+imageSchema.virtual("thumbnail").get(function () {
+  return this.url.replace("/upload", "/upload/w_300");
+});
 const CampgroundSchema = new mongoose.Schema({
   owner: {
     type: mongoose.Schema.Types.ObjectId,
@@ -24,10 +31,11 @@ const CampgroundSchema = new mongoose.Schema({
     trim: true,
     required: [true, "A campground must have a location"],
   },
-  image: {
-    type: String,
-    required: [true, "A campground must have an image"],
+  createdAt: {
+    type: Date,
+    default: Date.now(),
   },
+  images: [imageSchema],
   reviews: [
     {
       type: mongoose.Schema.Types.ObjectId,

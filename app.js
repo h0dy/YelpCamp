@@ -9,11 +9,17 @@ import reviewRoutes from "./routes/reviewRoutes.js";
 import userRoutes from "./routes/usersRoutes.js";
 import session from "express-session";
 import flash from "connect-flash";
-import globalErrorHandler from "./controllers/errorController.js";
 import passport from "passport";
 import LocalStrategy from "passport-local";
-import User from ".//models/user.js";
+import User from "./models/user.js";
+import dotenv from "dotenv";
+
 const app = express();
+
+if (process.env.NODE_ENV !== "production") {
+  app.use(morgan("dev"));
+  dotenv.config();
+}
 
 const connectDB = async () => {
   try {
@@ -48,7 +54,6 @@ passport.use(new LocalStrategy(User.authenticate()));
 passport.serializeUser(User.serializeUser());
 passport.deserializeUser(User.deserializeUser());
 
-app.use(morgan("dev"));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(methodOverride("_method"));
@@ -75,12 +80,12 @@ app.use("/campgrounds/:id/reviews", reviewRoutes);
 app.all(/(.*)/, (req, res, next) => {
   next(new AppError("404 – Page not found", 404));
 });
-// app.use((err, req, res, next) => {
-//   const { statusCode = 500, message = "something went wrong!" } = err;
-//   if (!err.message) err.message = "something went wrong!";
-//   res.status(statusCode).render("error", { err });
-// });
-app.use(globalErrorHandler);
+
+app.use((err, req, res, next) => {
+  const { statusCode = 500 } = err;
+  if (!err.message) err.message = "Something Went Wrong!";
+  res.status(statusCode).render("error", { err });
+});
 
 app.listen(8080, () => {
   connectDB();

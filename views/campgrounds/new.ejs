@@ -2,7 +2,7 @@
   <div class="row">
     <h1 class="text-center">New Campground</h1>
     <div class="col-6 offset-3">
-      <form action="/campgrounds" method="POST" novalidate class="validated-form">
+      <form action="/campgrounds" method="POST" novalidate class="validated-form" enctype="multipart/form-data">
         <div class="mb-3">
           <label class="form-label" for="title">Title</label>
           <input class="form-control" placeholder="Sea Hunting Camp" type="text" id="title" name="campground[title]"
@@ -29,14 +29,15 @@
           </div>
         </div>
         <div class="mb-3">
-          <label class="form-label" for="Image">Image Url</label>
-          <input class="form-control" type="text" id="Image" name="campground[image]" required>
+          <label for="image" class="form-label">Select images for the Camp</label>
+          <input class="form-control" type="file" id="image" name="image" multiple accept="image/*" required>
           <div class="valid-feedback">Looks Good!</div>
-          <div class="invalid-feedback">A campground must have an image</div>
+          <div class="invalid-feedback">A campground must have at least one image</div>
         </div>
         <div class="mb-3">
           <label for="description" class="form-label">Description</label>
-          <textarea class="form-control" id="description" rows="3" name="campground[description]" required></textarea>
+          <textarea class="form-control" id="description" rows="3" name="campground[description]" required
+            style="resize: none;"></textarea>
           <div class="valid-feedback">Looks Good!</div>
           <div class="invalid-feedback">A campground must have a description</div>
         </div>
