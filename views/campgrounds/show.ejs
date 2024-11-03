@@ -95,6 +95,7 @@
           <button class="btn btn-success">Submit</button>
         </form>
         <% } %>
+        <h2>Reviews:</h2>
           <% for (let review of camp.reviews.sort((a, b)=> parseFloat(b.rating) - parseFloat(a.rating))) {%>
             <div class="mb-3">
               <div class="card">

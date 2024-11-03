@@ -67,6 +67,7 @@ app.use((req, res, next) => {
   res.locals.info = req.flash("info");
   res.locals.update = req.flash("update");
   res.locals.error = req.flash("error");
+  res.locals.currentYear = new Date().getFullYear();
   next();
 });
 
