@@ -1,6 +1,10 @@
 import catchAsync from "../utils/catchAsync.js";
 import Campground from "../models/campground.js";
 import { cloudinary } from "../cloudinary/index.js";
+import mbxGeocoding from "@mapbox/mapbox-sdk/services/geocoding.js";
+
+const mapToken = process.env.MAP_TOKEN;
+const geoCoder = mbxGeocoding({ accessToken: mapToken });
 
 export const index = catchAsync(async (req, res) => {
   const camps = await Campground.find();
@@ -12,13 +16,18 @@ export const renderNewForm = (req, res) => {
 };
 
 export const createCamp = catchAsync(async (req, res, next) => {
+  const geoData = await geoCoder
+    .forwardGeocode({ query: req.body.campground.location, limit: 1 })
+    .send();
   const newCamp = new Campground(req.body.campground);
+  newCamp.geometry = geoData.body.features[0].geometry;
   newCamp.images = req.files.map((f) => ({
     url: f.path,
     filename: f.filename,
   }));
   newCamp.owner = req.user._id;
   await newCamp.save();
+  console.log(newCamp);
   req.flash("success", "Successfully made a new campground!");
   res.status(201).redirect(`/campgrounds/${newCamp._id}`);
 });
@@ -27,11 +36,11 @@ export const findOneCamp = catchAsync(async (req, res, next) => {
   const camp = await Campground.findById(req.params.id)
     .populate({ path: "reviews", populate: { path: "author" } })
     .populate("owner");
-  console.log(camp);
   if (!camp) {
     req.flash("error", "Cannot find that campground!");
     return res.redirect("/campgrounds");
   }
+  console.log(camp);
   res.status(200).render("campgrounds/show", { camp });
 });
 

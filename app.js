@@ -87,7 +87,7 @@ app.use((err, req, res, next) => {
   res.status(statusCode).render("error", { err });
 });
 
-app.listen(8080, () => {
+app.listen(3000, () => {
   connectDB();
-  console.log("Serving on port 8080");
+  console.log("Serving on port 3000");
 });

@@ -65,6 +65,7 @@
               <small class="text-body-secondary">Created at: <%= camp.createdAt.toDateString() %></small>
             </div>
       </div>
+      <div id='map' class="mb-3" style='width: 635px; height: 300px;'></div>
     </div>
     <div class="col-6">
       <% if (signedInUser){ %>
@@ -120,3 +121,8 @@
             <% }%>
     </div>
   </div>
+  <script>
+    const mapToken = "<%-process.env.MAP_TOKEN %>";
+    const camp = <%-JSON.stringify(camp)%>
+  </script>
+  <script src="/javascripts/showMap.js"></script>
