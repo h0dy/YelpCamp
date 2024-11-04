@@ -27,7 +27,6 @@ export const createCamp = catchAsync(async (req, res, next) => {
   }));
   newCamp.owner = req.user._id;
   await newCamp.save();
-  console.log(newCamp);
   req.flash("success", "Successfully made a new campground!");
   res.status(201).redirect(`/campgrounds/${newCamp._id}`);
 });
@@ -40,7 +39,6 @@ export const findOneCamp = catchAsync(async (req, res, next) => {
     req.flash("error", "Cannot find that campground!");
     return res.redirect("/campgrounds");
   }
-  console.log(camp);
   res.status(200).render("campgrounds/show", { camp });
 });
 

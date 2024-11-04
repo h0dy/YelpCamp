@@ -16,7 +16,7 @@
               <div class="carousel-inner">
                 <% camp.images.forEach((image, index)=> { %>
                   <div class="carousel-item <%= index === 0 ? 'active': '' %>">
-                    <img src="<%=image.url %>" class="d-block w-100" alt="...">
+                    <img crossorigin="anonymous" src="<%=image.url %>" class="d-block w-100" alt="">
                   </div>
                   <% })%>
               </div>
@@ -95,7 +95,7 @@
           <button class="btn btn-success">Submit</button>
         </form>
         <% } %>
-        <h2>Reviews:</h2>
+          <h2>Reviews:</h2>
           <% for (let review of camp.reviews.sort((a, b)=> parseFloat(b.rating) - parseFloat(a.rating))) {%>
             <div class="mb-3">
               <div class="card">
@@ -124,6 +124,6 @@
   </div>
   <script>
     const mapToken = "<%-process.env.MAP_TOKEN %>";
-    const camp = <%-JSON.stringify(camp)%>
+    const camp = <% -JSON.stringify(camp) %>
   </script>
   <script src="/javascripts/showMap.js"></script>

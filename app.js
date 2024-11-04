@@ -13,6 +13,8 @@ import passport from "passport";
 import LocalStrategy from "passport-local";
 import User from "./models/user.js";
 import dotenv from "dotenv";
+import mongoSanitize from "express-mongo-sanitize"; // for basic security
+import helmet from "helmet";
 
 const app = express();
 
@@ -24,9 +26,13 @@ if (process.env.NODE_ENV !== "production") {
 const connectDB = async () => {
   try {
     await mongoose.connect("mongodb://localhost:27017/yelp-camp");
-    console.log("MongoDB Connected");
+    if (process.env.NODE_ENV !== "production") {
+      console.log("MongoDB Connected");
+    }
   } catch (err) {
-    console.log("Error with connection to DB", err);
+    if (process.env.NODE_ENV !== "production") {
+      console.log("Error with connection to DB", err);
+    }
   }
 };
 
@@ -35,17 +41,65 @@ app.set("view engine", "ejs");
 app.set("views");
 
 const sessionConfig = {
+  name: "LogSession",
   secret: "sosecretkey",
   resave: false,
   saveUninitialized: true,
   cookie: {
     httpOnly: true,
+    secure: true,
     expires: Date.now() + 1000 * 60 * 60 * 24 * 7 * 2, // cookie expires after two weeks
     maxAge: 1000 * 60 * 60 * 24 * 7 * 2,
   },
 };
 
 // middlewares
+// security & common files/script from third party libraries to allow into the application
+app.use(mongoSanitize());
+const scriptSrcUrls = [
+  "https://stackpath.bootstrapcdn.com/",
+  "https://api.tiles.mapbox.com/",
+  "https://api.mapbox.com/",
+  "https://kit.fontawesome.com/",
+  "https://cdnjs.cloudflare.com/",
+  "https://cdn.jsdelivr.net",
+];
+const styleSrcUrls = [
+  "https://kit-free.fontawesome.com/",
+  "https://api.mapbox.com/",
+  "https://api.tiles.mapbox.com/",
+  "https://fonts.googleapis.com/",
+  "https://use.fontawesome.com/",
+  "https://cdn.jsdelivr.net",
+];
+const connectSrcUrls = [
+  "https://api.mapbox.com/",
+  "https://a.tiles.mapbox.com/",
+  "https://b.tiles.mapbox.com/",
+  "https://events.mapbox.com/",
+];
+const fontSrcUrls = [];
+app.use(
+  helmet.contentSecurityPolicy({
+    directives: {
+      defaultSrc: [],
+      connectSrc: ["'self'", ...connectSrcUrls],
+      scriptSrc: ["'unsafe-inline'", "'self'", ...scriptSrcUrls],
+      styleSrc: ["'self'", "'unsafe-inline'", ...styleSrcUrls],
+      workerSrc: ["'self'", "blob:"],
+      objectSrc: [],
+      imgSrc: [
+        "'self'",
+        "blob:",
+        "data:",
+        `https://res.cloudinary.com/${process.env.CLOUDINARY_CLOUD_NAME}/`,
+        "https://images.unsplash.com/",
+      ],
+      fontSrc: ["'self'", ...fontSrcUrls],
+    },
+  })
+);
+
 // authentication/sessions
 app.use(session(sessionConfig));
 app.use(passport.initialize());
@@ -60,7 +114,7 @@ app.use(methodOverride("_method"));
 app.use(express.static("public"));
 app.use(flash());
 
-// middleware to access a local variable for flash messages
+// middleware to access a local variable such as flash messages
 app.use((req, res, next) => {
   res.locals.signedInUser = req.user;
   res.locals.success = req.flash("success");
