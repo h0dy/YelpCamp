@@ -18,7 +18,8 @@ import session from "express-session";
 import MongoStore from "connect-mongo";
 
 const app = express();
-const dbUrl = process.env.DB_URL;
+const dbUrl = process.env.DB_URL || "mongodb://localhost:27017/yelp-camp";
+const secret = process.env.SECRET || "sosecretkey";
 
 if (process.env.NODE_ENV !== "production") {
   app.use(morgan("dev"));
@@ -46,14 +47,14 @@ const store = MongoStore.create({
   mongoUrl: dbUrl,
   touchAfter: 24 * 60 * 60, // update once every 24 hours
   crypto: {
-    secret: "sosecretkey",
+    secret,
   },
 });
 
 const sessionConfig = {
   store,
   name: "LogSession",
-  secret: "sosecretkey",
+  secret,
   resave: false,
   saveUninitialized: true,
   cookie: {
