@@ -7,7 +7,6 @@ import AppError from "./utils/appError.js";
 import campRoutes from "./routes/campRoutes.js";
 import reviewRoutes from "./routes/reviewRoutes.js";
 import userRoutes from "./routes/usersRoutes.js";
-import session from "express-session";
 import flash from "connect-flash";
 import passport from "passport";
 import LocalStrategy from "passport-local";
@@ -15,8 +14,11 @@ import User from "./models/user.js";
 import dotenv from "dotenv";
 import mongoSanitize from "express-mongo-sanitize"; // for basic security
 import helmet from "helmet";
+import session from "express-session";
+import MongoStore from "connect-mongo";
 
 const app = express();
+const dbUrl = process.env.DB_URL;
 
 if (process.env.NODE_ENV !== "production") {
   app.use(morgan("dev"));
@@ -25,7 +27,7 @@ if (process.env.NODE_ENV !== "production") {
 
 const connectDB = async () => {
   try {
-    await mongoose.connect("mongodb://localhost:27017/yelp-camp");
+    await mongoose.connect(dbUrl);
     if (process.env.NODE_ENV !== "production") {
       console.log("MongoDB Connected");
     }
@@ -40,20 +42,37 @@ app.engine("ejs", ejsMate);
 app.set("view engine", "ejs");
 app.set("views");
 
+const store = MongoStore.create({
+  mongoUrl: dbUrl,
+  touchAfter: 24 * 60 * 60, // update once every 24 hours
+  crypto: {
+    secret: "sosecretkey",
+  },
+});
+
 const sessionConfig = {
+  store,
   name: "LogSession",
   secret: "sosecretkey",
   resave: false,
   saveUninitialized: true,
   cookie: {
     httpOnly: true,
-    secure: true,
+    // secure: true,
     expires: Date.now() + 1000 * 60 * 60 * 24 * 7 * 2, // cookie expires after two weeks
     maxAge: 1000 * 60 * 60 * 24 * 7 * 2,
   },
 };
 
 // middlewares
+// authentication/sessions
+app.use(session(sessionConfig));
+app.use(passport.initialize());
+app.use(passport.session());
+passport.use(new LocalStrategy(User.authenticate()));
+passport.serializeUser(User.serializeUser());
+passport.deserializeUser(User.deserializeUser());
+
 // security & common files/script from third party libraries to allow into the application
 app.use(mongoSanitize());
 const scriptSrcUrls = [
@@ -99,14 +118,6 @@ app.use(
     },
   })
 );
-
-// authentication/sessions
-app.use(session(sessionConfig));
-app.use(passport.initialize());
-app.use(passport.session());
-passport.use(new LocalStrategy(User.authenticate()));
-passport.serializeUser(User.serializeUser());
-passport.deserializeUser(User.deserializeUser());
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
