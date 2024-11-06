@@ -38,5 +38,5 @@ MAP_TOKEN=yourMapToken
 for a better experience, use [nodemon](https://www.npmjs.com/package/nodemon) library to run the project
 
 ```bash
-nodemon app
+nodemon app.js
 ```
