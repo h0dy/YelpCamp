@@ -4,7 +4,7 @@ This is a project I built coding along as part of the Udemy course, [The Web Dev
 
 This project focuses on back-end development, so there is no ReactJS and no complex UI; it relies on **EJS** and **Bootstrap** for the front end.
 
-I learned full CRUD operations as well as authentication and authorization, working with users, reviews, and campgrounds. Additionally, I learned:
+In this project I learned full CRUD operations as well as authentication and authorization, working with users, reviews, and campgrounds. Additionally, I learned:
 
 - How to maintain user login sessions with cookies and sessions.
 - How to handle validations and error handling using **Express**.
