@@ -1,6 +1,6 @@
 # YelpCamp
 
-This is a project I built coding along as part of the Udemy course, [The Web Developer Bootcamp 2024](https://www.udemy.com/user/coltsteele/) by Colt Steele.
+This is a project I built coding along as part of the Udemy course, [The Web Developer Bootcamp](https://www.udemy.com/course/the-web-developer-bootcamp/) by Colt Steele.
 
 This project focuses on back-end development, so there is no ReactJS and no complex UI; it relies on **EJS** and **Bootstrap** for the front end.
 
